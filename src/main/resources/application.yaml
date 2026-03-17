@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: aws-rds-mysql-app
+  
+  datasource:
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+    
+    # Write (Master) DataSource configuration
+    write:
+      jdbc-url: jdbc:mysql://myapp-instance-1.czgq6yc4qr0o.ap-south-1.rds.amazonaws.com:3306/orderdb?createDatabaseIfNotExist=true&useSSL=true&serverTimezone=UTC&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8
+      username: admin
+      password: test1234
+      driver-class-name: com.mysql.cj.jdbc.Driver
+    
+    # Read Replicas (List of DataSources) 
+    reads:
+      - jdbc-url: jdbc:mysql://myapp-instance-2.czgq6yc4qr0o.ap-south-1.rds.amazonaws.com:3306/orderdb?createDatabaseIfNotExist=true&useSSL=true&serverTimezone=UTC&allowPublicKeyRetrieval=true&readOnly=true
+        username: admin
+        password: test1234
+        driver-class-name: com.mysql.cj.jdbc.Driver
+      - jdbc-url: jdbc:mysql://myapp-instance-3.czgq6yc4qr0o.ap-south-1.rds.amazonaws.com:3306/orderdb?createDatabaseIfNotExist=true&useSSL=true&serverTimezone=UTC&allowPublicKeyRetrieval=true&readOnly=true
+        username: admin
+        password: test1234
+        driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+        jdbc:
+          lob:
+            non_contextual_creation: true
+    open-in-view: false
+
+
+# Server
+server:
+  port: 8085
+
